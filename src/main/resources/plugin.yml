@@ -1,0 +1,6 @@
+name: InvMenuPNX
+version: "1.0.0"
+main: back.invmenupnx.InvMenuPlugin
+api: ["2.0.0"]
+author: Back
+description: "Fake inventory menu library for PowerNukkitX"
