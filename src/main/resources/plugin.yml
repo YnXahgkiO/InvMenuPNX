@@ -1,5 +1,5 @@
 name: InvMenuPNX
-version: "1.0.0"
+version: "1.0.1"
 main: back.invmenupnx.InvMenuPlugin
 api: ["2.0.0"]
 author: Back

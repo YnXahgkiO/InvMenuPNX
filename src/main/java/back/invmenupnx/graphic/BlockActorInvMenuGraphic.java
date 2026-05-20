@@ -3,6 +3,8 @@ package back.invmenupnx.graphic;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntityID;
 import cn.nukkit.inventory.fake.FakeInventoryType;
 import cn.nukkit.math.Vector3;
@@ -11,6 +13,12 @@ import cn.nukkit.network.protocol.BlockEntityDataPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
 
@@ -30,9 +38,12 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
         };
     }
 
+    private static final int[][] HORIZONTAL = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
     private final String blockId;
     private final String tileId;
     private final boolean isDouble;
+    private final Map<UUID, List<Vector3>> barriers = new ConcurrentHashMap<>();
 
     public BlockActorInvMenuGraphic(@NotNull String blockId, @NotNull String tileId, boolean isDouble) {
         this.blockId = blockId;
@@ -54,6 +65,8 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
         sendBlock(player, pos, title);
         if (isDouble) {
             sendBlock(player, pos.add(1, 0, 0), title);
+        } else if (blockId.equals(BlockID.CHEST)) {
+            placeChestBarriers(player, pos);
         }
     }
 
@@ -62,6 +75,12 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
         restoreBlock(player, pos);
         if (isDouble) {
             restoreBlock(player, pos.add(1, 0, 0));
+        }
+        List<Vector3> placed = barriers.remove(player.getUniqueId());
+        if (placed != null) {
+            for (Vector3 adj : placed) {
+                restoreBlockWithEntity(player, adj);
+            }
         }
     }
 
@@ -102,5 +121,39 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
         player.dataPacket(pk);
+    }
+
+    private void restoreBlockWithEntity(Player player, Vector3 pos) {
+        restoreBlock(player, pos);
+        BlockEntity be = player.getLevel().getBlockEntity(pos);
+        if (be != null) {
+            BlockEntityDataPacket pk = new BlockEntityDataPacket();
+            pk.x = pos.getFloorX();
+            pk.y = pos.getFloorY();
+            pk.z = pos.getFloorZ();
+            pk.namedTag = be.namedTag;
+            player.dataPacket(pk);
+        }
+    }
+
+    private void placeChestBarriers(Player player, Vector3 pos) {
+        List<Vector3> placed = new ArrayList<>();
+        for (int[] off : HORIZONTAL) {
+            Vector3 adj = new Vector3(pos.x + off[0], pos.y, pos.z + off[1]);
+            BlockEntity be = player.getLevel().getBlockEntity(adj);
+            if (be instanceof BlockEntityChest chest && chest.isPaired()) {
+                UpdateBlockPacket pk = new UpdateBlockPacket();
+                pk.blockRuntimeId = Block.get(BlockID.BARRIER).getRuntimeId();
+                pk.flags = UpdateBlockPacket.FLAG_NETWORK;
+                pk.x = adj.getFloorX();
+                pk.y = adj.getFloorY();
+                pk.z = adj.getFloorZ();
+                player.dataPacket(pk);
+                placed.add(adj);
+            }
+        }
+        if (!placed.isEmpty()) {
+            barriers.put(player.getUniqueId(), placed);
+        }
     }
 }
