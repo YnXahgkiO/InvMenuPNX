@@ -4,11 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.fake.FakeInventory;
 import cn.nukkit.inventory.fake.FakeInventoryType;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.ContainerOpenPacket;
 import back.invmenupnx.graphic.InvMenuGraphic;
-import back.invmenupnx.network.PlayerNetwork;
-import back.invmenupnx.session.PlayerSessionManager;
+import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.protocol.bedrock.packet.ContainerClosePacket;
+import org.cloudburstmc.protocol.bedrock.packet.ContainerOpenPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -48,8 +47,7 @@ public final class InvMenuFakeInventory extends FakeInventory {
         placedAt.put(player.getUniqueId(), pos);
         graphic.send(player, pos, getTitle());
 
-        PlayerNetwork network = PlayerSessionManager.getOrCreate(player).getNetwork();
-        network.waitForAck(() -> {
+        player.waitForAck(() -> {
             if (!player.isOnline() || player.getWindowId(this) == -1) {
                 placedAt.remove(player.getUniqueId());
                 graphic.remove(player, pos);
@@ -69,11 +67,12 @@ public final class InvMenuFakeInventory extends FakeInventory {
             return;
         }
 
+        int windowId = player.getWindowId(this);
         ContainerClosePacket closePacket = new ContainerClosePacket();
-        closePacket.windowId = player.getWindowId(this);
-        closePacket.wasServerInitiated = player.getClosingWindowId() != closePacket.windowId;
-        closePacket.type = getType();
-        player.dataPacket(closePacket);
+        closePacket.setContainerID((byte) windowId);
+        closePacket.setServerInitiatedClose(player.getClosingWindowId() != windowId);
+        closePacket.setContainerType(getType());
+        player.sendPacket(closePacket);
 
         Vector3 pos = placedAt.remove(player.getUniqueId());
         if (pos != null) {
@@ -90,11 +89,9 @@ public final class InvMenuFakeInventory extends FakeInventory {
 
     private void sendOpenContainer(Player player, Vector3 pos) {
         ContainerOpenPacket pk = new ContainerOpenPacket();
-        pk.windowId = player.getWindowId(this);
-        pk.type = getType().getNetworkType();
-        pk.x = pos.getFloorX();
-        pk.y = pos.getFloorY();
-        pk.z = pos.getFloorZ();
-        player.dataPacket(pk);
+        pk.setContainerID((byte) player.getWindowId(this));
+        pk.setContainerType(getType());
+        pk.setPosition(Vector3i.from(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()));
+        player.sendPacket(pk);
     }
 }

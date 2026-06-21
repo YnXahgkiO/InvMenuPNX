@@ -6,8 +6,6 @@ import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
-import cn.nukkit.event.server.DataPacketReceiveEvent;
-import cn.nukkit.network.protocol.NetworkStackLatencyPacket;
 import back.invmenupnx.session.PlayerSession;
 import back.invmenupnx.session.PlayerSessionManager;
 
@@ -23,18 +21,8 @@ public final class InvMenuEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerSession session = PlayerSessionManager.get(player);
         if (session != null) {
-            session.getNetwork().drop();
             session.firePendingCallback(player);
         }
         PlayerSessionManager.destroy(player);
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onDataPacketReceive(DataPacketReceiveEvent event) {
-        if (!(event.getPacket() instanceof NetworkStackLatencyPacket pk)) return;
-        PlayerSession session = PlayerSessionManager.get(event.getPlayer());
-        if (session != null) {
-            session.getNetwork().onAck(pk.timestamp);
-        }
     }
 }

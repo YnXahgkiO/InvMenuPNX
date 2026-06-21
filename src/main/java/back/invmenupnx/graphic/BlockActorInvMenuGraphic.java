@@ -9,8 +9,10 @@ import cn.nukkit.blockentity.BlockEntityID;
 import cn.nukkit.inventory.fake.FakeInventoryType;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.BlockEntityDataPacket;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
+import cn.nukkit.utils.RuntimeBlockDefinition;
+import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.protocol.bedrock.packet.BlockActorDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,49 +92,42 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
     }
 
     private void sendBlock(Player player, Vector3 pos, @Nullable String title) {
-        UpdateBlockPacket blockPk = new UpdateBlockPacket();
-        blockPk.blockRuntimeId = Block.get(blockId).getRuntimeId();
-        blockPk.flags = UpdateBlockPacket.FLAG_NETWORK;
-        blockPk.x = pos.getFloorX();
-        blockPk.y = pos.getFloorY();
-        blockPk.z = pos.getFloorZ();
-        player.dataPacket(blockPk);
+        Vector3i v = Vector3i.from(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
-        BlockEntityDataPacket dataPk = new BlockEntityDataPacket();
-        dataPk.x = pos.getFloorX();
-        dataPk.y = pos.getFloorY();
-        dataPk.z = pos.getFloorZ();
-        dataPk.namedTag = new CompoundTag()
+        UpdateBlockPacket blockPk = new UpdateBlockPacket();
+        blockPk.setBlockPosition(v);
+        blockPk.setDefinition(new RuntimeBlockDefinition(Block.get(blockId).getRuntimeId()));
+        player.sendPacket(blockPk);
+
+        BlockActorDataPacket dataPk = new BlockActorDataPacket();
+        dataPk.setBlockPosition(v);
+        dataPk.setActorDataTags(new CompoundTag()
                 .putString("id", tileId)
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())
                 .putInt("z", pos.getFloorZ())
                 .putBoolean("isMovable", true)
-                .putString("CustomName", title != null ? title : "");
-        player.dataPacket(dataPk);
+                .putString("CustomName", title != null ? title : "")
+                .toNetwork());
+        player.sendPacket(dataPk);
     }
 
     private void restoreBlock(Player player, Vector3 pos) {
         Block original = player.getLevel().getBlock(pos);
         UpdateBlockPacket pk = new UpdateBlockPacket();
-        pk.blockRuntimeId = original.getRuntimeId();
-        pk.flags = UpdateBlockPacket.FLAG_NETWORK;
-        pk.x = pos.getFloorX();
-        pk.y = pos.getFloorY();
-        pk.z = pos.getFloorZ();
-        player.dataPacket(pk);
+        pk.setBlockPosition(Vector3i.from(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()));
+        pk.setDefinition(new RuntimeBlockDefinition(original.getRuntimeId()));
+        player.sendPacket(pk);
     }
 
     private void restoreBlockWithEntity(Player player, Vector3 pos) {
         restoreBlock(player, pos);
         BlockEntity be = player.getLevel().getBlockEntity(pos);
         if (be != null) {
-            BlockEntityDataPacket pk = new BlockEntityDataPacket();
-            pk.x = pos.getFloorX();
-            pk.y = pos.getFloorY();
-            pk.z = pos.getFloorZ();
-            pk.namedTag = be.namedTag;
-            player.dataPacket(pk);
+            BlockActorDataPacket pk = new BlockActorDataPacket();
+            pk.setBlockPosition(Vector3i.from(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()));
+            pk.setActorDataTags(be.getNbt().toNetwork());
+            player.sendPacket(pk);
         }
     }
 
@@ -143,12 +138,9 @@ public final class BlockActorInvMenuGraphic implements InvMenuGraphic {
             BlockEntity be = player.getLevel().getBlockEntity(adj);
             if (be instanceof BlockEntityChest chest && chest.isPaired()) {
                 UpdateBlockPacket pk = new UpdateBlockPacket();
-                pk.blockRuntimeId = Block.get(BlockID.BARRIER).getRuntimeId();
-                pk.flags = UpdateBlockPacket.FLAG_NETWORK;
-                pk.x = adj.getFloorX();
-                pk.y = adj.getFloorY();
-                pk.z = adj.getFloorZ();
-                player.dataPacket(pk);
+                pk.setBlockPosition(Vector3i.from(adj.getFloorX(), adj.getFloorY(), adj.getFloorZ()));
+                pk.setDefinition(new RuntimeBlockDefinition(Block.get(BlockID.BARRIER).getRuntimeId()));
+                player.sendPacket(pk);
                 placed.add(adj);
             }
         }
