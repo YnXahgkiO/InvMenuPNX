@@ -1,6 +1,6 @@
 package back.invmenupnx.session;
 
-import cn.nukkit.Player;
+import org.powernukkitx.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;

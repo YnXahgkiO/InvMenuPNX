@@ -1,6 +1,6 @@
 package back.invmenupnx;
 
-import cn.nukkit.plugin.PluginBase;
+import org.powernukkitx.plugin.PluginBase;
 
 public final class InvMenuPlugin extends PluginBase {
 

@@ -1,7 +1,7 @@
 package back.invmenupnx.util;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.enchantment.Enchantment;
+import org.powernukkitx.item.Item;
+import org.powernukkitx.item.enchantment.Enchantment;
 
 import java.util.ArrayList;
 import java.util.Arrays;

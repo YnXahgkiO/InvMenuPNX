@@ -1,15 +1,15 @@
 package back.invmenupnx.graphic;
 
-import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.blockentity.BlockEntityID;
-import cn.nukkit.inventory.fake.FakeInventoryType;
-import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.RuntimeBlockDefinition;
+import org.powernukkitx.Player;
+import org.powernukkitx.block.Block;
+import org.powernukkitx.block.BlockID;
+import org.powernukkitx.blockentity.BlockEntity;
+import org.powernukkitx.blockentity.BlockEntityChest;
+import org.powernukkitx.blockentity.BlockEntityID;
+import org.powernukkitx.inventory.fake.FakeInventoryType;
+import org.powernukkitx.math.Vector3;
+import org.powernukkitx.nbt.tag.CompoundTag;
+import org.powernukkitx.utils.RuntimeBlockDefinition;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.packet.BlockActorDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;

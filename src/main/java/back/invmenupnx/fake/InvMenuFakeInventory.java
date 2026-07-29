@@ -1,9 +1,9 @@
 package back.invmenupnx.fake;
 
-import cn.nukkit.Player;
-import cn.nukkit.inventory.fake.FakeInventory;
-import cn.nukkit.inventory.fake.FakeInventoryType;
-import cn.nukkit.math.Vector3;
+import org.powernukkitx.Player;
+import org.powernukkitx.inventory.fake.FakeInventory;
+import org.powernukkitx.inventory.fake.FakeInventoryType;
+import org.powernukkitx.math.Vector3;
 import back.invmenupnx.graphic.InvMenuGraphic;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.packet.ContainerClosePacket;
