@@ -1,6 +1,6 @@
 package back.invmenupnx.type;
 
-import cn.nukkit.inventory.fake.FakeInventoryType;
+import org.powernukkitx.inventory.fake.FakeInventoryType;
 import back.invmenupnx.graphic.BlockActorInvMenuGraphic;
 import back.invmenupnx.graphic.InvMenuGraphic;
 import org.jetbrains.annotations.NotNull;

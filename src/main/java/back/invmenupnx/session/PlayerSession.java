@@ -1,7 +1,6 @@
 package back.invmenupnx.session;
 
-import cn.nukkit.Player;
-import back.invmenupnx.network.PlayerNetwork;
+import org.powernukkitx.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -10,21 +9,15 @@ import java.util.function.Consumer;
 public final class PlayerSession {
 
     private final UUID uuid;
-    private final PlayerNetwork network;
     private @Nullable Object currentMenu;
     private @Nullable Consumer<Player> pendingThenCallback;
 
-    public PlayerSession(UUID uuid, Player player) {
+    public PlayerSession(UUID uuid) {
         this.uuid = uuid;
-        this.network = new PlayerNetwork(player);
     }
 
     public UUID getUuid() {
         return uuid;
-    }
-
-    public PlayerNetwork getNetwork() {
-        return network;
     }
 
     public void setCurrentMenu(@Nullable Object menu) {

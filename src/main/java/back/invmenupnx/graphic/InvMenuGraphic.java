@@ -1,7 +1,7 @@
 package back.invmenupnx.graphic;
 
-import cn.nukkit.Player;
-import cn.nukkit.math.Vector3;
+import org.powernukkitx.Player;
+import org.powernukkitx.math.Vector3;
 import org.jetbrains.annotations.Nullable;
 
 public interface InvMenuGraphic {

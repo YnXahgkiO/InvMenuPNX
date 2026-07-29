@@ -1,8 +1,8 @@
 package back.invmenupnx;
 
-import cn.nukkit.Player;
-import cn.nukkit.inventory.fake.FakeInventory;
-import cn.nukkit.inventory.fake.FakeInventoryType;
+import org.powernukkitx.Player;
+import org.powernukkitx.inventory.fake.FakeInventory;
+import org.powernukkitx.inventory.fake.FakeInventoryType;
 import back.invmenupnx.fake.InvMenuFakeInventory;
 import back.invmenupnx.graphic.InvMenuGraphic;
 import back.invmenupnx.session.PlayerSession;

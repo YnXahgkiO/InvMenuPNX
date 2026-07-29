@@ -1,8 +1,8 @@
 package back.invmenupnx.template;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
+import org.powernukkitx.Player;
+import org.powernukkitx.item.Item;
+import org.powernukkitx.item.ItemID;
 import back.invmenupnx.InvMenu;
 import back.invmenupnx.InvMenuPlugin;
 import back.invmenupnx.transaction.InvMenuTransactionResult;

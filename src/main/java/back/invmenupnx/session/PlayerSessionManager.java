@@ -1,6 +1,6 @@
 package back.invmenupnx.session;
 
-import cn.nukkit.Player;
+import org.powernukkitx.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ public final class PlayerSessionManager {
     private PlayerSessionManager() {}
 
     public static void create(Player player) {
-        sessions.put(player.getUniqueId(), new PlayerSession(player.getUniqueId(), player));
+        sessions.put(player.getUniqueId(), new PlayerSession(player.getUniqueId()));
     }
 
     public static void destroy(Player player) {
@@ -26,6 +26,6 @@ public final class PlayerSessionManager {
     }
 
     public static PlayerSession getOrCreate(Player player) {
-        return sessions.computeIfAbsent(player.getUniqueId(), uuid -> new PlayerSession(uuid, player));
+        return sessions.computeIfAbsent(player.getUniqueId(), PlayerSession::new);
     }
 }

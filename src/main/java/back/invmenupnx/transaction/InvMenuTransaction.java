@@ -1,9 +1,9 @@
 package back.invmenupnx.transaction;
 
-import cn.nukkit.Player;
-import cn.nukkit.event.inventory.ItemStackRequestActionEvent;
-import cn.nukkit.inventory.fake.FakeInventory;
-import cn.nukkit.item.Item;
+import org.powernukkitx.Player;
+import org.powernukkitx.event.inventory.ItemStackRequestActionEvent;
+import org.powernukkitx.inventory.fake.FakeInventory;
+import org.powernukkitx.item.Item;
 
 public class InvMenuTransaction {
 
