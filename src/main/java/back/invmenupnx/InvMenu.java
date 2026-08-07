@@ -100,17 +100,26 @@ public final class InvMenu {
             this.inventory.setTitle(title);
         }
 
-        int windowId = player.addWindow(this.inventory);
-        boolean success = windowId != -1;
+        player.waitForAck(() -> {
+            if (!player.isOnline()) {
+                if (callback != null) {
+                    callback.onSend(false);
+                }
+                return;
+            }
 
-        if (success) {
-            PlayerSession session = PlayerSessionManager.getOrCreate(player);
-            session.setCurrentMenu(this);
-        }
+            int windowId = player.addWindow(this.inventory);
+            boolean success = windowId != -1;
 
-        if (callback != null) {
-            callback.onSend(success);
-        }
+            if (success) {
+                PlayerSession session = PlayerSessionManager.getOrCreate(player);
+                session.setCurrentMenu(this);
+            }
+
+            if (callback != null) {
+                callback.onSend(success);
+            }
+        });
     }
 
     public void send(Collection<? extends Player> players) {
